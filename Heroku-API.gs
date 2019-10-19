@@ -11,7 +11,7 @@ function getApps() {
   };
   var response = UrlFetchApp.fetch(HEROKU_ADDRESS, options);  
   Logger.log(response.getContentText());
-  return response.getContentText();
+  return JSON.parse(response.getContentText());
 }
 
 function getConfigVars() {
@@ -25,7 +25,7 @@ function getConfigVars() {
   };
   var response = UrlFetchApp.fetch(HEROKU_ADDRESS+'/' + APP_ID +'/config-vars', options);  
   // Logger.log(response.getContentText());
-  return response.getContentText();
+  return JSON.parse(response.getContentText());
 }
 
 function updateConfigVars(newConfigVars) {
@@ -42,7 +42,7 @@ function updateConfigVars(newConfigVars) {
   };
   var response = UrlFetchApp.fetch(HEROKU_ADDRESS+'/' + APP_ID +'/config-vars', options);  
   // Logger.log(response.getContentText());
-  return response.getContentText();  
+  return JSON.parse(response.getContentText());  
 }
 
 function delConfigVar(ConfigVarName) {
@@ -61,7 +61,7 @@ function delConfigVar(ConfigVarName) {
   };
   var response = UrlFetchApp.fetch(HEROKU_ADDRESS+'/' + APP_ID +'/config-vars', options);  
   // Logger.log(response.getContentText());
-  return response.getContentText();
+  return JSON.parse(response.getContentText());
 }
 
 /*
