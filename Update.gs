@@ -9,30 +9,30 @@ function UpdateCVs() {
   for (var i=0; i<sheets.length; i++) {
     dt = new DataTable(sheets[i]);
     if (dt.valid()) {
-      // Logger.log("Sheet %s, named %s", i, sheets[i].getName());
-      // Logger.log(dt.data);
+      // console.info("Sheet %s, named %s", i, sheets[i].getName());
+      // console.info(dt.data);
       
       // add info to ConfigVars2Update
       dt.addPairs(ConfigVars2Update);
       // Check if there was bolus, in which case silence high alarms for x min (handled only in script or partially in sheet?)
     }
     else 
-      Logger.log("Sheet No. %s (named %s) is skipped b/c it's not formatted as expected.", i, sheets[i].getName());
+      console.info("Sheet No. %d (named %s) is skipped b/c it's not formatted as expected.", i, sheets[i].getName());
   }
-  Logger.log("ConfigVars2Update: %s", ConfigVars2Update);
+  console.info("ConfigVars2Update: %s", ConfigVars2Update);
 
   // Check if update to ConfigVars necessary -- Could just update regardless, but that's not very elegant and qucikly fills up the version history of the Heroku app
   var CurrentConfigVars = getConfigVars();
   var toUpdate = false; // no update needed
   for (var k in ConfigVars2Update) {
-    // Logger.log("k: .%s., Current: .%s., toUpdate: .%s.", k, CurrentConfigVars[k], ConfigVars2Update[k]);
+    // console.info("k: .%s., Current: .%s., toUpdate: .%s.", k, CurrentConfigVars[k], ConfigVars2Update[k]);
     if (ConfigVars2Update[k] != CurrentConfigVars[k])
       toUpdate = true;
   }
   if (toUpdate)
     updateConfigVars(ConfigVars2Update)
-    else Logger.log("No update needed.");  
-  // Logger.log("CurrentConfigVars: %s", CurrentConfigVars);
+    else console.info("No update needed.");  
+  // console.info("CurrentConfigVars: %s", CurrentConfigVars);
 }
 
 var DataTable = function(sheet) {
@@ -68,10 +68,10 @@ function testGetBolus() {
   
   var bolus = JSON.parse(response.getContentText())[0];
   
-  Logger.log(bolus); 
+  console.info(bolus); 
   
-  Logger.log(bolus.created_at); 
-  Logger.log(bolus.insulin); 
+  console.info(bolus.created_at); 
+  console.info(bolus.insulin); 
   
   
 }
