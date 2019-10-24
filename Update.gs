@@ -1,6 +1,12 @@
+NOW_SHEET = 'Settings'; // sheet holding current date and time
+NOW_CELL = 'B3';
+
 // function that needs to be executed every 5 min
 function UpdateCVs() { 
   var ss = SpreadsheetApp.openById(data_ss_id); // data_ss_id = id of spreadsheet that holds the schedule
+  
+  forceRecalc(ss); // change current date and time in a cell to force recalculation of values
+  
   var sheets = ss.getSheets();
   var ConfigVars2Update = {}; // Key-Value pairs to update
   var dt;
@@ -9,7 +15,7 @@ function UpdateCVs() {
   for (var i=0; i<sheets.length; i++) {
     dt = new DataTable(sheets[i]);
     if (dt.valid()) {
-      // console.info("Sheet %s, named %s", i, sheets[i].getName());
+      // console.info("Sheet %d, named %s", i, sheets[i].getName());
       // console.info(dt.data);
       
       // add info to ConfigVars2Update
@@ -60,6 +66,10 @@ var DataTable = function(sheet) {
   } 
 } 
 
+function forceRecalc(ss) {
+  ss.getSheetByName(NOW_SHEET).getRange(NOW_CELL).setValue(Utilities.formatDate(new Date(), "CET", "M/d/yyyy HH:mm")); // CET - regulat time; WET - yeshiva time);
+  Utilities.sleep(5000); // hopefully this will help make sure newest data is returned
+}
 
 // https://josziglimp.herokuapp.com/api/v1/treatments.json?find[eventType]=Bolus&count=1 
 
