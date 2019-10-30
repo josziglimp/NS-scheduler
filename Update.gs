@@ -1,6 +1,8 @@
 NOW_SHEET = 'Settings'; // sheet holding current date and time
 NOW_CELL = 'B3';
 
+CV_SHEET = 'Current Config Vars'; // sheet holding current Config Vars
+
 // function that needs to be executed every 5 min
 function UpdateCVs() { 
   var ss = SpreadsheetApp.openById(data_ss_id); // data_ss_id = id of spreadsheet that holds the schedule
@@ -35,9 +37,13 @@ function UpdateCVs() {
     if (ConfigVars2Update[k] != CurrentConfigVars[k])
       toUpdate = true;
   }
-  if (toUpdate)
-    updateConfigVars(ConfigVars2Update)
-    else console.info("No update needed.");  
+  if (toUpdate) {
+    
+    saveConfigVars(ss,    // to Sheet
+                   updateConfigVars(ConfigVars2Update) // in Heroku
+                  ); 
+  }
+  else console.info("No update needed.");  
   // console.info("CurrentConfigVars: %s", CurrentConfigVars);
 }
 
@@ -65,6 +71,13 @@ var DataTable = function(sheet) {
     }
   } 
 } 
+
+function saveConfigVars(ss, newConfigVars) { // to Sheet 
+  var CVarray = Object.keys(newConfigVars).map(function(key) { // Object to Array conversion from https://stackoverflow.com/questions/38824349/how-to-convert-an-object-to-an-array-of-key-value-pairs-in-javascript
+    return [key, newConfigVars[key]];
+  });
+  ss.getSheetByName(CV_SHEET).getRange(1, 1, CVarray.length, 2).setValues(CVarray);
+}
 
 function forceRecalc(ss) {
   ss.getSheetByName(NOW_SHEET).getRange(NOW_CELL).setValue(Utilities.formatDate(new Date(), "CET", "M/d/yyyy HH:mm")); // CET - regulat time; WET - yeshiva time);
