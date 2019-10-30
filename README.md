@@ -24,11 +24,11 @@ Modification of Nightscout Heroku Config Vars based on weekly schedule in GSheet
 
 #### *Not high or low alarm* snooze times
 
-* `ALARM_URGENT_MINS` (`30 60 90 120`) - Number of minutes to snooze urgent alarms (that aren't tagged as high or low), space separated for options in browser, first used for pushover
-  * `ALARM_WARN_MINS` (`30 60 90 120`) - Number of minutes to snooze warning alarms (that aren't tagged as high or low), space separated for options in browser, first used for pushover
+ * `ALARM_URGENT_MINS` (`30 60 90 120`) - Number of minutes to snooze urgent alarms (that aren't tagged as high or low), space separated for options in browser, first used for pushover
+ * `ALARM_WARN_MINS` (`30 60 90 120`) - Number of minutes to snooze warning alarms (that aren't tagged as high or low), space separated for options in browser, first used for pushover
 
 #### Predefined values for your browser settings (optional)
-  * `CUSTOM_TITLE` (`Nightscout`) - Could theoretically be used as a status message
+  * `CUSTOM_TITLE` (`Nightscout`) - Could theoretically be used as a status or info message (although browser page likely needs to be reloaded for change to be displayed 
 
 ##### `upbat` (Uploader Battery)
   Displays the most recent battery status from the uploader phone. . Use these [extended setting](#extended-settings) to adjust behavior:
