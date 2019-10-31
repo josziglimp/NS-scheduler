@@ -1,5 +1,14 @@
 # NS-scheduler
-Modification of Nightscout Heroku Config Vars based on weekly schedule in GSheet
+Modification of Nightscout Heroku Config Vars based on weekly schedule in GSheet. 
+
+Nightscout is a great, powerful, versatile tool to monitor and manage all things D. I found that there is one area lacking: *flexibility*: I need to set different high/low levels for day and night time, and for various days of the week. Similarly, settings for other variables might need to change during the course of the week. For example, do you really want to wake up at night for a cannula change warning? `NS-scheduler` addresses this need.
+
+While creating `NS-scheduler`, the goal was to have a simple, familiar, easy to use interface to set schedules. A spreadsheet seemed to be a practical solution: I chose Google Sheets with Google Apps Script. Using a copy of this template, you can set a weekly schedule for any of the Config Vars used by Heroku Nightscout. The actual changes to the settings are accomplished by the scrip in this git.
+
+## Usage
+  * Copy the template and edit it according to your needs.
+    * `NS-scheduler` will attempt to process each sheet in the file; you can have as many sheets/schedules as you like. `NS-scheduler` will check the cells with red borders (*control cells*) on each sheet to see if they have the expected values. If they don't, the sheet is skipped. By changing the value of one of the *control cells* to anything else, effectively the schedule of that sheet can be suspended.
+    * To accommodate for temporary changes, the 3rd (?) row each sheet can be used to override the schedule on that sheet. 
 
 ## Environment (Config) Variables that might be practical *to modify on a schedule*
 (repeat of selected info from [here](https://github.com/nightscout/cgm-remote-monitor#environment))
