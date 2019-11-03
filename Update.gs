@@ -36,21 +36,21 @@ function UpdateCVs() {
 
   var CurrentConfigVars = getConfigVars();
 
-  if (CurrentConfigVars.NSS_HIGH_SNOOSE_MINS) { // NSS_HIGH_SNOOSE_MINS Config Var is defined. CurrentConfigVars instead of ConfigVars2Update so that it works even if NSS_HIGH_SNOOSE_MINS is only set in Heroku and not in the sheet
+  if (CurrentConfigVars[NSS_HIGH_SNOOSE_MINS]) { // NSS_HIGH_SNOOSE_MINS Config Var is defined. CurrentConfigVars instead of ConfigVars2Update so that it works even if NSS_HIGH_SNOOSE_MINS is only set in Heroku and not in the sheet
     // the disadvantage is that a schedules chance in NSS_HIGH_SNOOSE_MINS is really effective at the execution following the update, but this doesn't seem to be a big deal
 
     // Check if there was bolus, in which case silence high alarms   
     var lastBolus = new Date(getNSdata(GET_LAST_BOLUS, "created_at"));
     var lastSGV = new Date(getNSdata(GET_LAST_SGV, "dateString")); // Could use current time, but that might raise time zone issues, so using this instead (if SGV is stale the appropriate alarm is different anyway)
-    if ((lastSGV - lastBolus) <= (CurrentConfigVars.NSS_HIGH_SNOOSE_MINS * 60 * 1000)) { // in milliseconds
+    if ((lastSGV - lastBolus) <= (CurrentConfigVars[NSS_HIGH_SNOOSE_MINS] * 60 * 1000)) { // in milliseconds
       for (var i=0; i<NSS_HIGH_SNOOSE_CVs.length; i++) {
         ConfigVars2Update[NSS_HIGH_SNOOSE_CVs[i]] = "off"; // overriding setting from sheet
       }
-      ConfigVars2Update.NSS_HIGH_SNOOSE_STATUS = "Snoozing. bolus @ " + lastBolus; // Info only used for debugging
-      console.info("Snoozing high @ " + lastSGV + ". bolus @ " + lastBolus);        
+      ConfigVars2Update[NSS_HIGH_SNOOSE_STATUS] = "snoozing"; // Info only used for debugging
+      console.info("Snoozing high @ " + lastSGV + ". bolus @ " + lastBolus + ". NSS_HIGH_SNOOSE_MINS: " + CurrentConfigVars[NSS_HIGH_SNOOSE_MINS]);        
     }
     else {
-      ConfigVars2Update.NSS_HIGH_SNOOSE_STATUS = "not snoozing"; // Info only used for debugging
+      ConfigVars2Update[NSS_HIGH_SNOOSE_STATUS] = "not snoozing"; // Info only used for debugging
       }
   }
       
