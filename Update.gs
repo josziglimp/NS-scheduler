@@ -3,9 +3,16 @@ NOW_CELL = 'B3';
 
 CV_SHEET = 'Current Config Vars'; // sheet holding current Config Vars
 
+NSS_HIGH_SNOOSE_MINS = "NSS_HIGH_SNOOSE_MINS"; // Config Var to hold number of mins to snoose high alarms for following a bolus
+NSS_HIGH_SNOOSE_CVs = ["ALARM_HIGH", "ALARM_URGENT_HIGH"]; // the Config Vars to turn off when snoozing high alarms because of a recent bolus
+NSS_HIGH_SNOOSE_STATUS = "NSS_HIGH_SNOOSE_STATUS"; // using this Config Var for status info - only used for debugging
+
 // function that needs to be executed every 5 min
 function UpdateCVs() { 
-  var ss = SpreadsheetApp.openById(data_ss_id); // data_ss_id = id of spreadsheet that holds the schedule
+  GET_LAST_BOLUS = "https://" + APP_ID + ".herokuapp.com/api/v1/treatments.json?find[eventType]=Bolus&count=1";
+  GET_LAST_SGV = "https://" + APP_ID + ".herokuapp.com/api/v1/entries/sgv.json?count=1"
+
+  var ss = SpreadsheetApp.openById(data_ss_id); // data_ss_id: id of spreadsheet that holds the schedule
   
   forceRecalc(ss); // change current date and time in a cell to force recalculation of values
   
@@ -22,15 +29,34 @@ function UpdateCVs() {
       
       // add info to ConfigVars2Update
       dt.addPairs(ConfigVars2Update);
-      // Check if there was bolus, in which case silence high alarms for x min (handled only in script or partially in sheet?)
     }
     else 
       console.info("Sheet No. %d (named %s) is skipped b/c it's not formatted as expected.", i, sheets[i].getName());
   }
-  console.info("ConfigVars2Update: %s", ConfigVars2Update);
 
-  // Check if update to ConfigVars necessary -- Could just update regardless, but that's not very elegant and qucikly fills up the version history of the Heroku app
   var CurrentConfigVars = getConfigVars();
+
+  if (CurrentConfigVars.NSS_HIGH_SNOOSE_MINS) { // NSS_HIGH_SNOOSE_MINS Config Var is defined. CurrentConfigVars instead of ConfigVars2Update so that it works even if NSS_HIGH_SNOOSE_MINS is only set in Heroku and not in the sheet
+    // the disadvantage is that a schedules chance in NSS_HIGH_SNOOSE_MINS is really effective at the execution following the update, but this doesn't seem to be a big deal
+
+    // Check if there was bolus, in which case silence high alarms   
+    var lastBolus = new Date(getNSdata(GET_LAST_BOLUS, "created_at"));
+    var lastSGV = new Date(getNSdata(GET_LAST_SGV, "dateString")); // Could use current time, but that might raise time zone issues, so using this instead (if SGV is stale the appropriate alarm is different anyway)
+    if ((lastSGV - lastBolus) <= (CurrentConfigVars.NSS_HIGH_SNOOSE_MINS * 60 * 1000)) { // in milliseconds
+      for (var i=0; i<NSS_HIGH_SNOOSE_CVs.length; i++) {
+        ConfigVars2Update[NSS_HIGH_SNOOSE_CVs[i]] = "off"; // overriding setting from sheet
+      }
+      ConfigVars2Update.NSS_HIGH_SNOOSE_STATUS = "Snoozing. bolus @ " + lastBolus; // Info only used for debugging
+      console.info("Snoozing high @ " + lastSGV + ". bolus @ " + lastBolus);        
+    }
+    else {
+      ConfigVars2Update.NSS_HIGH_SNOOSE_STATUS = "not snoozing"; // Info only used for debugging
+      }
+  }
+      
+  console.info("ConfigVars2Update: %s", ConfigVars2Update);
+  
+  // Check if update to ConfigVars necessary -- Could just update regardless, but that's not very elegant, might mess up the Heroku app and qucikly fills up the version history of the Heroku app
   var toUpdate = false; // no update needed
   for (var k in ConfigVars2Update) {
     // console.info("k: .%s., Current: .%s., toUpdate: .%s.", k, CurrentConfigVars[k], ConfigVars2Update[k]);
@@ -84,17 +110,8 @@ function forceRecalc(ss) {
   Utilities.sleep(5000); // hopefully this will help make sure newest data is returned
 }
 
-// https://josziglimp.herokuapp.com/api/v1/treatments.json?find[eventType]=Bolus&count=1 
-
-function testGetBolus() {
-  var response = UrlFetchApp.fetch("https://josziglimp.herokuapp.com/api/v1/treatments.json?find[eventType]=Bolus&count=1");
-  
-  var bolus = JSON.parse(response.getContentText())[0];
-  
-  console.info(bolus); 
-  
-  console.info(bolus.created_at); 
-  console.info(bolus.insulin); 
-  
-  
+function getNSdata(address, data) {
+  var response = JSON.parse(UrlFetchApp.fetch(address).getContentText())[0];
+  // console.info("response: %s", response);
+  return response[data];
 }
