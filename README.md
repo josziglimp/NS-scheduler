@@ -5,10 +5,15 @@ Nightscout is a great, powerful, versatile tool to monitor and manage all things
 
 While creating `NS-scheduler`, the goal was to have a simple, familiar, easy to use interface to set schedules. A spreadsheet seemed to be a practical solution: I chose Google Sheets with Google Apps Script. Using a copy of this template, you can set a weekly schedule for any of the Config Vars used by Heroku Nightscout. The actual changes to the settings are accomplished by the scrip in this git.
 
-## Usage
+## Setup
   * Copy the template and edit it according to your needs.
-    * `NS-scheduler` will attempt to process each sheet in the file; you can have as many sheets/schedules as you like. `NS-scheduler` will check the cells with red borders (*control cells*) on each sheet to see if they have the expected values. If they don't, the sheet is skipped. By changing the value of one of the *control cells* to anything else, effectively the schedule of that sheet can be suspended.
-    * To accommodate for temporary changes, the 3rd (?) row each sheet can be used to override the schedule on that sheet. 
+    * `NS-scheduler` will attempt to process each sheet in the file; you can have as many sheets/schedules as you like. `NS-scheduler` will check the cells with red borders (*control cells*) on each sheet to see if they have the expected values. If they don't, the sheet is skipped. By changing the value of one of the *control cells* to anything other than the initially set expected value, effectively the schedule of that sheet can be suspended.
+  * On the *Settings* sheet set the unit used (mmol/l or mg/dl). This affects the value of *BGmultiplier* that can be used to convert BG values to mg/dl used be Nightscout. 
+  * Copy the code in this git (Update.gs and Heroku-API.gs) to a new Google Script either manually or using this chrome extension.
+  * You also need to set the following variables in the script:
+    * 
+## Usage   
+  * To accommodate for temporary changes, the 3rd (*temp override*) row of each sheet can be used to override the schedule on that sheet. Cell C3 can hold the start time of the temporary settings and D3 the end time. 
 
 ## Environment (Config) Variables that might be practical *to modify on a schedule*
 (repeat of selected info from [here](https://github.com/nightscout/cgm-remote-monitor#environment))
