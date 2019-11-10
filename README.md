@@ -10,8 +10,8 @@ While creating `NS-scheduler`, the goal was to have a simple, familiar, easy to 
     * `NS-scheduler` will attempt to process each sheet in the file; you can have as many sheets/schedules as you like. `NS-scheduler` will check the cells with red borders (*control cells*) on each sheet to see if they have the expected values. If they don't, the sheet is skipped. By changing the value of one of the *control cells* to anything other than the initially set expected value, effectively the schedule of that sheet can be suspended.
   * On the *Settings* sheet set the unit used (mmol/l or mg/dl). This affects the value of *BGmultiplier* that can be used to convert BG values to mg/dl used be Nightscout. 
   * Copy the code in this git (Update.gs and Heroku-API.gs) to a new Google Script either manually or using this chrome extension.
-  * You also need to set the following variables in the script (eg. `APP_ID = 'name of your Heroku app';`:
-    * `data_ss_id`: the spreadsheet key of your copy of the template (only the string without https:// etc.). 
+  * You also need to set the following variables in the script (eg. `APP_ID = 'name of your Heroku app';`):
+    * `data_ss_id`: the [spreadsheet key](https://support.qooqee.com/hc/en-us/articles/360000471814-How-do-I-find-my-Google-Sheet-Key-) of your copy of the template (only the string without https:// etc.). 
     * `HEROKU_API_KEY`: you need to obtain this from... 
     * `APP_ID`: name of your Heroku app or its unique id that can be obtained by executing the `getApps()` script function (afterwards see the Logs). 
 
