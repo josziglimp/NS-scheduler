@@ -113,5 +113,5 @@ function forceRecalc(ss) {
 function getNSdata(address, data) {
   var response = JSON.parse(UrlFetchApp.fetch(address).getContentText())[0];
   // console.info("response: %s", response);
-  return response[data];
+  return (response == undefined ? 0 : response[data]);
 }
